@@ -1,0 +1,4 @@
+.*.sw[a-z]
+.rvmrc
+.rspec
+Gemfile.lock
