@@ -40,7 +40,7 @@ RSpec.configure do |config|
   session = Sunspot.session
 
   config.before(:each) do
-    session.remove_all!(Person)
+    session.remove_all!
     ResqueSpec.reset!
 
     Sunspot.session = Sunspot::Queue::SessionProxy.new(session)
