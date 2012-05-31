@@ -5,7 +5,7 @@ module Sunspot::Queue
     extend Helpers
 
     def self.queue
-      :solr
+      :sunspot
     end
 
     def self.perform(klass, id)

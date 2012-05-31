@@ -15,7 +15,7 @@ describe "Queued Indexing" do
     Person.search.results.should be_empty
 
     expect do
-      ResqueSpec.perform_all(:solr)
+      ResqueSpec.perform_all(:sunspot)
     end.to change { Person.search.hits.size }.by(1)
 
     results = Person.search { fulltext "Montoya" }.results
@@ -30,7 +30,7 @@ describe "Queued Indexing" do
   # Then the record should not be in solr
   it "queues removal of ActiveRecord models using Resque" do
     person = Person.create(:name => "Fezzik")
-    ResqueSpec.perform_all(:solr)
+    ResqueSpec.perform_all(:sunspot)
     Person.search.hits.size.should == 1
 
     expect do
@@ -38,7 +38,7 @@ describe "Queued Indexing" do
     end.to_not change { Person.search.hits.size }
 
     expect do
-      ResqueSpec.perform_all(:solr)
+      ResqueSpec.perform_all(:sunspot)
     end.to change { Person.search.hits.size }.by(-1)
   end
 end
