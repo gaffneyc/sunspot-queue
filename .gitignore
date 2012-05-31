@@ -2,3 +2,4 @@
 .rvmrc
 .rspec
 Gemfile.lock
+pkg
