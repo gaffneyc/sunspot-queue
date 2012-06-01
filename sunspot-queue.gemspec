@@ -1,3 +1,5 @@
+require File.expand_path("../lib/sunspot/queue/version", __FILE__)
+
 # encoding: UTF-8
 Gem::Specification.new do |s|
   s.name               = "sunspot-queue"
@@ -6,7 +8,7 @@ Gem::Specification.new do |s|
   s.require_path       = "lib"
   s.authors            = ["Chris Gaffney"]
   s.email              = ["gaffneyc@gmail.com"]
-  s.version            = "0.9.0"
+  s.version            = Sunspot::Queue::VERSION
   s.platform           = Gem::Platform::RUBY
   s.files              = Dir.glob("{lib,spec}/**/*") + %w[LICENSE README.md]
 
