@@ -1,4 +1,4 @@
-# sunspot-queue
+# sunspot-queue [![Build Status](https://secure.travis-ci.org/gaffneyc/sunspot-queue.png?branch=master)](http://travis-ci.org/gaffneyc/sunspot-queue)
 
 Background search indexing using existing worker systems.
 
