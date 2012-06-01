@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.email              = ["gaffneyc@gmail.com"]
   s.version            = Sunspot::Queue::VERSION
   s.platform           = Gem::Platform::RUBY
-  s.files              = Dir.glob("{lib,spec}/**/*") + %w[LICENSE README.md]
+  s.files              = Dir.glob("{lib,spec}/**/*") + %w[LICENSE README.md History.md]
 
   s.add_dependency "resque"
   s.add_dependency "sunspot_rails",            ">= 1.3.0"
