@@ -15,6 +15,7 @@ Gem::Specification.new do |s|
   s.add_dependency "resque"
   s.add_dependency "sunspot_rails",            ">= 1.3.0"
 
+  s.add_development_dependency "rake"
   s.add_development_dependency "rspec",        "~> 2.10.0"
   s.add_development_dependency "resque_spec"
   s.add_development_dependency "sunspot_solr"
