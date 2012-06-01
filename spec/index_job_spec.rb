@@ -8,6 +8,7 @@ describe Sunspot::Queue::IndexJob do
 
       expect do
         Sunspot::Queue::IndexJob.perform(Person, person.id)
+        commit
       end.to change { Person.search.hits.size }.by(1)
 
       results = Person.search { fulltext "grandson" }.results
@@ -24,6 +25,18 @@ describe Sunspot::Queue::IndexJob do
       expect do
         Sunspot::Queue::IndexJob.perform(Person, 404) rescue nil
       end.to_not change { Sunspot.session }
+    end
+
+    it "does not commit changes to the index" do
+      person = Person.create(:name => "The Grandson")
+
+      expect do
+        Sunspot::Queue::IndexJob.perform(Person, person.id)
+      end.to_not change { Person.search.hits.size }
+
+      expect do
+        commit
+      end.to change { Person.search.hits.size }
     end
   end
 end

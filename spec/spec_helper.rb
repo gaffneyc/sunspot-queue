@@ -1,4 +1,5 @@
 require "sunspot/queue"
+require "sunspot/queue/helpers"
 
 require "socket"
 require "active_record"
@@ -35,6 +36,15 @@ RSpec.configure do |config|
   config.treat_symbols_as_metadata_keys_with_true_values = true
   config.run_all_when_everything_filtered = true
   config.filter_run :focus
+
+  config.include(Sunspot::Queue::Helpers)
+  config.include(
+    Module.new do
+      def commit
+        without_proxy { Sunspot.commit }
+      end
+    end
+  )
 
   # Original sunspot session not wrapped in our proxy object
   session = Sunspot.session

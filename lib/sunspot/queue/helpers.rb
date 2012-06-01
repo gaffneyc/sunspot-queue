@@ -14,7 +14,6 @@ module Sunspot::Queue
 
       yield
     ensure
-      Sunspot.commit rescue nil
       Sunspot.session = proxy if proxy
     end
   end
