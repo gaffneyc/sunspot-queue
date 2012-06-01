@@ -1,5 +1,5 @@
 # encoding: utf-8
-require "bundler/setup"
+require "bundler"
 require "rspec/core/rake_task"
 
 # Add bundler gem building helpers
