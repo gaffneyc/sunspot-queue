@@ -82,6 +82,11 @@ RSpec.configure do |config|
     Sunspot.session = Sunspot::Queue::SessionProxy.new(session, backend)
   end
 
+  config.before(:each, :backend => :inline) do
+    backend = Sunspot::Queue::Inline::Backend.new
+    Sunspot.session = Sunspot::Queue::SessionProxy.new(session, backend)
+  end
+
   # Configure Solr and run a server in the background for the duration of the
   # tests.
   config.before(:suite) do
