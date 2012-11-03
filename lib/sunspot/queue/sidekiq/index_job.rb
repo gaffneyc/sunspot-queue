@@ -9,7 +9,7 @@ module Sunspot::Queue::Sidekiq
 
     def perform(klass, id)
       without_proxy do
-        klass.to_s.constantize.find(id).solr_index
+        constantize(klass).find(id).solr_index
       end
     end
   end
