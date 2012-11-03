@@ -1,4 +1,6 @@
 language: ruby
+before_install:
+  - gem install nokogiri -- --with-cflags='--std=gnu99'
 rvm:
   - 1.9.3
   - ruby-head
