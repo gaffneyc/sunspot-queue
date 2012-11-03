@@ -8,6 +8,14 @@ require "sunspot/rails"
 require "sunspot/solr/server"
 require "resque_spec"
 
+# Neither is required when loading sunspot/queue
+require "sunspot/queue/resque"
+require "sunspot/queue/sidekiq"
+
+# Sidekiq
+require "sidekiq"
+require "sidekiq/testing"
+
 # Configure ActiveRecord and Sunspot to work with ActiveRecord
 ActiveRecord::Base.establish_connection(
   :adapter  => "sqlite3",
@@ -35,7 +43,11 @@ end
 RSpec.configure do |config|
   config.treat_symbols_as_metadata_keys_with_true_values = true
   config.run_all_when_everything_filtered = true
-  config.filter_run :focus
+  config.order = "random"
+
+  # Requires supporting ruby files with custom matchers and macros, etc,
+  # in spec/support/ and its subdirectories.
+  Dir[File.expand_path("../support/*.rb", __FILE__)].each { |f| require(f) }
 
   config.include(Sunspot::Queue::Helpers)
   config.include(
@@ -49,11 +61,24 @@ RSpec.configure do |config|
   # Original sunspot session not wrapped in our proxy object
   session = Sunspot.session
 
+  # Clean up data between tests
   config.before(:each) do
     session.remove_all!
+  end
+
+  config.before(:each, :resque => true) do
     ResqueSpec.reset!
 
-    Sunspot.session = Sunspot::Queue::SessionProxy.new(session)
+    backend = Sunspot::Queue::Resque::Backend.new
+    Sunspot.session = Sunspot::Queue::SessionProxy.new(session, backend)
+  end
+
+  config.before(:each, :sidekiq => true) do
+    Sidekiq::Worker.clear_all
+
+    require "sunspot/queue/sidekiq"
+    backend = Sunspot::Queue::Sidekiq::Backend.new
+    Sunspot.session = Sunspot::Queue::SessionProxy.new(session, backend)
   end
 
   # Configure Solr and run a server in the background for the duration of the
