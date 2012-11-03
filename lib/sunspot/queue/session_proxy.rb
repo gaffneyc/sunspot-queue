@@ -1,13 +1,11 @@
-require "resque"
-require "sunspot/queue/index_job"
-require "sunspot/queue/removal_job"
-
 module Sunspot::Queue
   class SessionProxy
     attr_reader :session
+    attr_accessor :backend
 
-    def initialize(session)
+    def initialize(session, backend)
       @session = session
+      @backend = backend
     end
 
     def index(*objects)
@@ -18,7 +16,7 @@ module Sunspot::Queue
       end
 
       objects.each do |object|
-        ::Resque.enqueue(IndexJob, object.class.name, object.id)
+        @backend.index(object.class.name, object.id)
       end
     end
     alias :index! :index
@@ -34,7 +32,7 @@ module Sunspot::Queue
           # persisted and can safely be ignored since it shouldn't exist in the
           # search index.
           if object.id
-            ::Resque.enqueue(RemovalJob, object.class.name, object.id)
+            @backend.remove(object.class.name, object.id)
           end
         end
       end
@@ -51,7 +49,7 @@ module Sunspot::Queue
 
     # Enqueues a removal job based on class and id.
     def remove_by_id(klass, id)
-      ::Resque.enqueue(RemovalJob, klass.to_s, id)
+      @backend.remove(klass.to_s, id)
     end
     alias :remove_by_id! :remove_by_id
 

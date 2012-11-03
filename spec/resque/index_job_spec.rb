@@ -1,13 +1,19 @@
 require "spec_helper"
 
-describe Sunspot::Queue::IndexJob do
+describe Sunspot::Queue::Resque::IndexJob do
+  it "is linked to Sunspot::Queue::IndexJob for backwards compatibility" do
+    ::Sunspot::Queue::IndexJob.should == ::Sunspot::Queue::Resque::IndexJob
+  end
+
   context "ActiveRecord" do
+    let(:job) { Sunspot::Queue::Resque::IndexJob }
+
     it "indexes an ActiveRecord model" do
       # This will queue a job but we'll just ignore it to isolate the job
       person = Person.create(:name => "The Grandson")
 
       expect do
-        Sunspot::Queue::IndexJob.perform(Person, person.id)
+        job.perform(Person, person.id)
         commit
       end.to change { Person.search.hits.size }.by(1)
 
@@ -17,13 +23,13 @@ describe Sunspot::Queue::IndexJob do
 
     it "raises an error if the record could not be found" do
       expect do
-        Sunspot::Queue::IndexJob.perform(Person, 404)
+        job.perform(Person, 404)
       end.to raise_error(ActiveRecord::RecordNotFound)
     end
 
     it "maintains the existing proxy if there was an error" do
       expect do
-        Sunspot::Queue::IndexJob.perform(Person, 404) rescue nil
+        job.perform(Person, 404) rescue nil
       end.to_not change { Sunspot.session }
     end
 
@@ -31,7 +37,7 @@ describe Sunspot::Queue::IndexJob do
       person = Person.create(:name => "The Grandson")
 
       expect do
-        Sunspot::Queue::IndexJob.perform(Person, person.id)
+        job.perform(Person, person.id)
       end.to_not change { Person.search.hits.size }
 
       expect do
