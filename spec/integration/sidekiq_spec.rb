@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe "Sidekiq Integration", :sidekiq => true do
+describe "Sidekiq Integration", :backend => :sidekiq do
   let(:index_job)   { Sunspot::Queue::Sidekiq::IndexJob }
   let(:removal_job) { Sunspot::Queue::Sidekiq::RemovalJob }
 

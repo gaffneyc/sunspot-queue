@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe "Queued Indexing", :resque => true do
+describe "Queued Indexing", :backend => :resque do
   # Given an active record model
   # When I save the model
   # Then the record should not be in solr

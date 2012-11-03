@@ -61,19 +61,20 @@ RSpec.configure do |config|
   # Original sunspot session not wrapped in our proxy object
   session = Sunspot.session
 
-  # Clean up data between tests
+  # Clean up data between tests and reset the session
   config.before(:each) do
+    Sunspot.session = session
     session.remove_all!
   end
 
-  config.before(:each, :resque => true) do
+  config.before(:each, :backend => :resque) do
     ResqueSpec.reset!
 
     backend = Sunspot::Queue::Resque::Backend.new
     Sunspot.session = Sunspot::Queue::SessionProxy.new(session, backend)
   end
 
-  config.before(:each, :sidekiq => true) do
+  config.before(:each, :backend => :sidekiq) do
     Sidekiq::Worker.clear_all
 
     require "sunspot/queue/sidekiq"
