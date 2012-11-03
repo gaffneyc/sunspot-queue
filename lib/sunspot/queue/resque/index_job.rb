@@ -1,8 +1,8 @@
 require "sunspot/queue/helpers"
 
-module Sunspot::Queue
+module Sunspot::Queue::Resque
   class IndexJob
-    extend Helpers
+    extend ::Sunspot::Queue::Helpers
 
     def self.queue
       :sunspot

@@ -1,7 +1,8 @@
 require "spec_helper"
 
 describe Sunspot::Queue::SessionProxy do
-  let(:proxy) { Sunspot::Queue::SessionProxy.new(mock) }
+  let(:backend) { mock }
+  let(:proxy)   { Sunspot::Queue::SessionProxy.new(mock, backend) }
 
   context "#index" do
     it "enqueues a single job for each class" do
@@ -9,8 +10,7 @@ describe Sunspot::Queue::SessionProxy do
         Person.create(:name => "#{i} of 5")
       end
 
-      Resque.should_receive(:enqueue).with do |job, klass, id|
-        job.should == ::Sunspot::Queue::IndexJob
+      backend.should_receive(:index).with do |klass, _|
         klass.should == "Person"
       end.exactly(5).times
 
@@ -22,7 +22,7 @@ describe Sunspot::Queue::SessionProxy do
         Person.create(:name => "Clone ##{i}")
       end
 
-      Resque.should_receive(:enqueue).exactly(2).times
+      backend.should_receive(:index).exactly(2).times
 
       proxy.index(people)
     end
@@ -30,7 +30,7 @@ describe Sunspot::Queue::SessionProxy do
     it "handles a single object being enqueued" do
       person = Person.create(:name => "Buttercup")
 
-      Resque.should_receive(:enqueue).with do |_,_,id|
+      backend.should_receive(:index).with do |_, id|
         id.should == person.id
       end
 
@@ -62,7 +62,8 @@ describe Sunspot::Queue::SessionProxy do
       people = 2.times.map { |i| Person.new(:name => i) }
       people.first.save
 
-      Resque.should_not_receive(:enqueue)
+      backend.should_not_receive(:index)
+
       expect do
         proxy.index(people)
       end.to raise_error(Sunspot::Queue::NotPersistedError)
@@ -75,8 +76,7 @@ describe Sunspot::Queue::SessionProxy do
         Person.create(:name => "#{i} of 5")
       end
 
-      Resque.should_receive(:enqueue).with do |job, klass, id|
-        job.should == ::Sunspot::Queue::RemovalJob
+      backend.should_receive(:remove).with do |klass, id|
         klass.should == "Person"
       end.exactly(5).times
 
@@ -88,7 +88,7 @@ describe Sunspot::Queue::SessionProxy do
         Person.create(:name => "Clone ##{i}")
       end
 
-      Resque.should_receive(:enqueue).exactly(2).times
+      backend.should_receive(:remove).exactly(2).times
 
       proxy.remove(people)
     end
@@ -96,8 +96,7 @@ describe Sunspot::Queue::SessionProxy do
     it "handles a single object" do
       person = Person.create(:name => "Buttercup")
 
-      Resque.should_receive(:enqueue).with do |job, _, id|
-        job.should == ::Sunspot::Queue::RemovalJob
+      backend.should_receive(:remove).with do |_, id|
         id.should == person.id
       end
 
@@ -108,7 +107,7 @@ describe Sunspot::Queue::SessionProxy do
       people = 2.times.map { |i| Person.new(:name => "Thing #{i}") }
       people.first.save
 
-      Resque.should_receive(:enqueue).once
+      backend.should_receive(:remove).once
 
       proxy.remove(people)
     end

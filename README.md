@@ -6,7 +6,7 @@ Background search indexing using existing worker systems.
 
     $ gem install sunspot-queue
 
-## Usage with Rails (or without)
+## Usage with Rails and Resque
 
 In your Gemfile
 
@@ -15,11 +15,30 @@ In your Gemfile
 
 In config/initializers/sunspot.rb
 
-    Sunspot.session = Sunspot::Queue::SessionProxy.new(Sunspot.session)
+    require "sunspot/queue/resque"
+    backend = Sunspot::Queue::Resque::Backend.new
+    Sunspot.session = Sunspot::Queue::SessionProxy.new(Sunspot.session, backend)
 
 Start Resque
 
     $ QUEUE=sunspot rake resque:work
+
+## Usage with Rails and Sidekiq
+
+In your Gemfile
+
+    gem "sunspot-queue"
+    gem "sidekiq"
+
+In config/initializers/sunspot.rb
+
+    require "sunspot/queue/sidekiq"
+    backend = Sunspot::Queue::Sidekiq::Backend.new
+    Sunspot.session = Sunspot::Queue::SessionProxy.new(Sunspot.session, sidekiq)
+
+Start Sidekiq
+
+    $ sidekiq -q sunspot
 
 ## Note on Patches/Pull Requests
 
