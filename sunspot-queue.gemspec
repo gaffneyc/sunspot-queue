@@ -14,8 +14,8 @@ Gem::Specification.new do |s|
 
   s.add_dependency "sunspot_rails",            ">= 1.3.0"
 
-  s.add_runtime_dependency "resque"
-  s.add_runtime_dependency "sidekiq"
+  s.add_development_dependency "resque"
+  s.add_development_dependency "sidekiq"
 
   s.add_development_dependency "rake"
   s.add_development_dependency "rspec",        "~> 2.11.0"
