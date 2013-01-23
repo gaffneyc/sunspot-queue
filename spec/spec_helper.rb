@@ -100,8 +100,8 @@ RSpec.configure do |config|
 
     at_exit { Process.kill("TERM", solr_pid) }
 
-    # Wait for up to 5 seconds for Solr to boot
-    10.times do
+    # Wait up to 30 seconds for Solr to boot
+    60.times do
       begin
         TCPSocket.new("localhost", 8983)
         break
