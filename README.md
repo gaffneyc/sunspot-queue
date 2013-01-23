@@ -40,6 +40,18 @@ Start Sidekiq
 
     $ sidekiq -q sunspot
 
+## Configuring Sunspot Queue
+
+In config/initializers/sunspot.rb
+
+```ruby
+Sunspot::Queue.configure do |config|
+  # Override default job classes
+  config.index_job   = CustomIndexJob
+  config.removal_job = CustomRemovalJob
+end
+```
+
 ## Configuring Auto Commit
 
 The sunspot-queue jobs update the Solr index but those changes don't appear in
