@@ -4,41 +4,55 @@ Background search indexing using existing worker systems.
 
 ## Install
 
-    $ gem install sunspot-queue
+```console
+$ gem install sunspot-queue
+```
 
 ## Usage with Rails and Resque
 
 In your Gemfile
 
-    gem "sunspot-queue"
-    gem "resque"
+```ruby
+gem "sunspot-queue"
+gem "resque"
+```
 
 In config/initializers/sunspot.rb
 
-    require "sunspot/queue/resque"
-    backend = Sunspot::Queue::Resque::Backend.new
-    Sunspot.session = Sunspot::Queue::SessionProxy.new(Sunspot.session, backend)
+```ruby
+require "sunspot/queue/resque"
+backend = Sunspot::Queue::Resque::Backend.new
+Sunspot.session = Sunspot::Queue::SessionProxy.new(Sunspot.session, backend)
+```
 
 Start Resque
 
-    $ QUEUE=sunspot rake resque:work
+```console
+$ QUEUE=sunspot rake resque:work
+```
 
 ## Usage with Rails and Sidekiq
 
 In your Gemfile
 
-    gem "sunspot-queue"
-    gem "sidekiq"
+```ruby
+gem "sunspot-queue"
+gem "sidekiq"
+```
 
 In config/initializers/sunspot.rb
 
-    require "sunspot/queue/sidekiq"
-    backend = Sunspot::Queue::Sidekiq::Backend.new
-    Sunspot.session = Sunspot::Queue::SessionProxy.new(Sunspot.session, backend)
+```ruby
+require "sunspot/queue/sidekiq"
+backend = Sunspot::Queue::Sidekiq::Backend.new
+Sunspot.session = Sunspot::Queue::SessionProxy.new(Sunspot.session, backend)
+```
 
 Start Sidekiq
 
-    $ sidekiq -q sunspot
+```console
+$ sidekiq -q sunspot
+```
 
 ## Configuring Sunspot Queue
 
@@ -61,7 +75,7 @@ commits.
 
 Add (or uncomment) the following in solrconfig.xml
 
-```
+```xml
 <autoCommit>
   <maxDocs>10000</maxDocs>
   <maxTime>30000</maxTime>
@@ -81,9 +95,11 @@ Please don't make changes to the Rakefile, version, or history.
 
 ## Development
 
-    $ gem install bundler (if you don't have it)
-    $ bundle install
-    $ guard
+```console
+$ gem install bundler
+$ bundle
+$ guard
+```
 
 ## Copyright
 
