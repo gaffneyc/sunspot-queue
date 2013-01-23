@@ -1,37 +1,48 @@
-require 'spec_helper'
+require "spec_helper"
 
-module Sunspot::Queue::Sidekiq
-  class SampleModel ; end
+describe Sunspot::Queue::Sidekiq::Backend do
 
-  describe Backend do
-    subject(:backend){ described_class.new(configuration) }
-    let(:configuration){ double("Configuration") }
+  # Mock SidekiqJob
+  class CustomSidekiqJob
+    include ::Sidekiq::Worker
 
-    describe "#index" do
-      let(:index_job){ double("Sidekiq Job") }
-
-      before do
-        configuration.stub(:sidekiq_index_job).and_return index_job
-      end
-
-      it "enqueues a job in Resque using the configuration's sidekiq_index_job" do
-        index_job.should_receive(:perform_async).with(SampleModel, 9)
-        backend.index(SampleModel, 9)
-      end
-    end
-
-    describe "#remove" do
-      let(:removal_job){ double("Sidekiq Job") }
-
-      before do
-        configuration.stub(:sidekiq_index_job).and_return removal_job
-      end
-
-      it "enqueues a job in Resque using the configuration's sidekiq_removal_job" do
-        removal_job.should_receive(:perform_async).with(SampleModel, 11)
-        backend.index(SampleModel, 11)
-      end
+    def perform(klass, id)
     end
   end
 
+  subject(:backend) { described_class.new(configuration) }
+
+  let(:configuration) { ::Sunspot::Queue::Configuration.new }
+
+  describe "#index" do
+    it "uses the index job set in the global configuration" do
+      configuration.index_job = CustomSidekiqJob
+
+      expect do
+        backend.index(Person, 9)
+      end.to change { CustomSidekiqJob.jobs.size }.by(1)
+    end
+
+    it "uses the default index job if one is not configured" do
+      expect do
+        backend.index(Person, 11)
+      end.to change { ::Sunspot::Queue::Sidekiq::IndexJob.jobs.size }.by(1)
+    end
+  end
+
+  describe "#remove" do
+    it "uses the removal job set in the global configuration" do
+      configuration.removal_job = CustomSidekiqJob
+
+      expect do
+        backend.remove(Person, 11)
+      end.to change { CustomSidekiqJob.jobs.size }.by(1)
+    end
+
+    it "uses the default removal job if one is not configured" do
+      expect do
+        backend.remove(Person, 11)
+      end.to change { ::Sunspot::Queue::Sidekiq::RemovalJob.jobs.size }.by(1)
+    end
+  end
 end

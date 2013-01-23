@@ -6,7 +6,7 @@ module Sunspot::Queue::Resque
   class Backend
     attr_reader :configuration
 
-    def initialize(configuration=Sunspot::Queue.configuration)
+    def initialize(configuration = Sunspot::Queue.configuration)
       @configuration = configuration
     end
 
@@ -15,11 +15,21 @@ module Sunspot::Queue::Resque
     end
 
     def index(klass, id)
-      enqueue(configuration.resque_index_job, klass, id)
+      enqueue(index_job, klass, id)
     end
 
     def remove(klass, id)
-      enqueue(configuration.resque_removal_job, klass, id)
+      enqueue(removal_job, klass, id)
+    end
+
+    private
+
+    def index_job
+      configuration.index_job || ::Sunspot::Queue::Resque::IndexJob
+    end
+
+    def removal_job
+      configuration.removal_job || ::Sunspot::Queue::Resque::RemovalJob
     end
   end
 end

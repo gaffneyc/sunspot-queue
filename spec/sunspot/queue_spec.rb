@@ -1,4 +1,4 @@
-require 'spec_helper'
+require "spec_helper"
 
 describe Sunspot::Queue do
 
@@ -8,7 +8,7 @@ describe Sunspot::Queue do
       config.should be_kind_of(Sunspot::Queue::Configuration)
     end
 
-    it "returns the same same configuration when requested multiple times" do
+    it "returns the same configuration when requested multiple times" do
       config = Sunspot::Queue.configuration
       Sunspot::Queue.configuration.should be(config)
       Sunspot::Queue.configuration.should be(config)
@@ -18,13 +18,10 @@ describe Sunspot::Queue do
   describe "#configure(&blk)" do
     it "yields the configuration to a block" do
       config = Sunspot::Queue.configuration
-      expect { |blk|
+      expect do |blk|
         Sunspot::Queue.configure(&blk)
-      }.to yield_with_args(config)
+      end.to yield_with_args(config)
     end
-  end
-
-  describe "defaults" do
   end
 
 end

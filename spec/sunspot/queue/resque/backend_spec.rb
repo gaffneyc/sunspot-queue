@@ -1,37 +1,48 @@
-require 'spec_helper'
+require "spec_helper"
 
-module Sunspot::Queue::Resque
-  class SampleModel ; end
+describe Sunspot::Queue::Resque::Backend do
 
-  describe Backend do
-    subject(:backend){ described_class.new(configuration) }
-    let(:configuration){ double("Configuration") }
+  # Mock ResqueJob
+  class CustomResqueJob
+    @queue = :custom_queue
 
-    describe "#index" do
-      let(:index_job){ double("Resque Job") }
+    def perform(klass, id)
+    end
+  end
 
-      before do
-        configuration.stub(:resque_index_job).and_return index_job
-      end
+  subject(:backend) { described_class.new(configuration) }
 
-      it "enqueues a job in Resque using the configuration's resque_index_job" do
-        ::Resque::should_receive(:enqueue).with(index_job, SampleModel, 3)
-        backend.index(SampleModel, 3)
-      end
+  let(:configuration) { ::Sunspot::Queue::Configuration.new }
+
+  describe "#index" do
+    it "uses the index job set in the global configuration" do
+      configuration.index_job = CustomResqueJob
+
+      expect do
+        backend.index(Person, 3)
+      end.to change { ResqueSpec.queue_for(CustomResqueJob).size }.by(1)
     end
 
-    describe "#remove" do
-      let(:removal_job){ double("Resque Job") }
+    it "uses the default index job if one is not configured" do
+      expect do
+        backend.index(Person, 12)
+      end.to change { ResqueSpec.queue_for(Sunspot::Queue::Resque::IndexJob).size }.by(1)
+    end
+  end
 
-      before do
-        configuration.stub(:resque_index_job).and_return removal_job
-      end
+  describe "#remove" do
+    it "uses the removal job set in the global configuration" do
+      configuration.removal_job = CustomResqueJob
 
-      it "enqueues a job in Resque using the configuration's resque_index_job" do
-        ::Resque::should_receive(:enqueue).with(removal_job, SampleModel, 7)
-        backend.index(SampleModel, 7)
-      end
+      expect do
+        backend.remove(Person, 3)
+      end.to change { ResqueSpec.queue_for(CustomResqueJob).size }.by(1)
     end
 
+    it "uses the default index job if one is not configured" do
+      expect do
+        backend.remove(Person, 12)
+      end.to change { ResqueSpec.queue_for(Sunspot::Queue::Resque::RemovalJob).size }.by(1)
+    end
   end
 end
