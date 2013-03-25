@@ -11,6 +11,7 @@ require "resque_spec"
 # Neither is required when loading sunspot/queue
 require "sunspot/queue/resque"
 require "sunspot/queue/sidekiq"
+require "sunspot/queue/delayed_job"
 
 # Sidekiq
 require "sidekiq"
@@ -79,6 +80,14 @@ RSpec.configure do |config|
 
     require "sunspot/queue/sidekiq"
     backend = Sunspot::Queue::Sidekiq::Backend.new
+    Sunspot.session = Sunspot::Queue::SessionProxy.new(session, backend)
+  end
+
+  config.before(:each, :backend => :delayed_job) do
+    Delayed::Worker.delay_jobs = false 
+
+    require "sunspot/queue/delayed_job"
+    backend = Sunspot::Queue::DelayedJob::Backend.new
     Sunspot.session = Sunspot::Queue::SessionProxy.new(session, backend)
   end
 
