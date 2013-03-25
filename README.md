@@ -54,6 +54,30 @@ Start Sidekiq
 $ sidekiq -q sunspot
 ```
 
+## Usage with Rails and Delayed::Job 
+
+In your Gemfile
+
+```ruby
+gem "sunspot-queue"
+gem "delayed_job"
+gem "delayed_job_active_record"     # or choose another backend
+```
+
+In config/initializers/sunspot.rb
+
+```ruby
+require "sunspot/queue/delayed_job"
+backend = Sunspot::Queue::DelayedJob::Backend.new
+Sunspot.session = Sunspot::Queue::SessionProxy.new(Sunspot.session, backend)
+```
+
+Start Delayed::Job
+
+```console
+$ rake jobs:work 
+```
+
 ## Configuring Sunspot Queue
 
 In config/initializers/sunspot.rb

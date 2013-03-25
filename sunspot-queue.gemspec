@@ -16,6 +16,7 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency "resque"
   s.add_development_dependency "sidekiq"
+  s.add_development_dependency "delayed_job"
 
   s.add_development_dependency "rake"
   s.add_development_dependency "rspec",        "~> 2.11.0"
