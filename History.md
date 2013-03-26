@@ -1,5 +1,8 @@
 # Sunspot Queue Changelog
 
+## 0.11.0
+* Delayed Job support
+
 ## 0.10.0
 * Sidekiq support
 * SessionProxy now takes a backend as a second required option
