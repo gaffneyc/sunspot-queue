@@ -1,5 +1,7 @@
 .*.sw[a-z]
 .rvmrc
+.ruby-version
+.ruby-gemset
 .rspec
 Gemfile.lock
 pkg
