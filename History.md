@@ -1,5 +1,8 @@
 # Sunspot Queue Changelog
 
+## 0.11.2
+* Fix an issue serializing to Sidekiq with Rails 4
+
 ## 0.11.1
 * Allow without_proxy to work with SessionProxy subclasses
 * Added missing requires in sidekiq jobs
