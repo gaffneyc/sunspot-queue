@@ -7,7 +7,7 @@ module Sunspot::Queue
 
       # Pop off the queueing proxy for the block if it's in place so we don't
       # requeue the same job multiple times.
-      if Sunspot.session.instance_of?(SessionProxy)
+      if Sunspot.session.is_a?(SessionProxy)
         proxy = Sunspot.session
         Sunspot.session = proxy.session
       end
