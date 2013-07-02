@@ -1,4 +1,5 @@
 require "sidekiq/worker"
+require "sunspot/queue/helpers"
 
 module Sunspot::Queue::Sidekiq
   class RemovalJob
