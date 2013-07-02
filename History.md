@@ -1,5 +1,9 @@
 # Sunspot Queue Changelog
 
+## 0.11.1
+* Allow without_proxy to work with SessionProxy subclasses
+* Added missing requires in sidekiq jobs
+
 ## 0.11.0
 * Delayed Job support
 
