@@ -10,7 +10,7 @@ module Sunspot::Queue::Sidekiq
 
     def perform(klass, id)
       without_proxy do
-        ::Sunspot.remove_by_id(klass, id)
+        ::Sunspot.remove_by_id!(klass, id)
       end
     end
   end
