@@ -33,15 +33,11 @@ describe Sunspot::Queue::Resque::IndexJob do
       end.to_not change { Sunspot.session }
     end
 
-    it "does not commit changes to the index" do
+    it "commits changes to the index" do
       person = Person.create(:name => "The Grandson")
 
       expect do
         job.perform(Person, person.id)
-      end.to_not change { Person.search.hits.size }
-
-      expect do
-        commit
       end.to change { Person.search.hits.size }
     end
   end

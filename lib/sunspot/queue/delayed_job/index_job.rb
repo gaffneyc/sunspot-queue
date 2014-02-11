@@ -6,7 +6,7 @@ module Sunspot::Queue::DelayedJob
 
     def perform
       without_proxy do
-        constantize(klass).find(id).solr_index
+        Sunspot.index! [constantize(klass).find(id)]
       end
     end
   end

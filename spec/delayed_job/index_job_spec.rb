@@ -4,7 +4,7 @@ describe Sunspot::Queue::DelayedJob::IndexJob do
   context "ActiveRecord" do
 
     it "indexes an ActiveRecord model" do
-      person = Person.create(:name => "The Grandson") 
+      person = Person.create(:name => "The Grandson")
       job = Sunspot::Queue::DelayedJob::IndexJob.new(Person, person.id)
 
       # This will queue a job but we'll just ignore it to isolate the job
@@ -33,16 +33,12 @@ describe Sunspot::Queue::DelayedJob::IndexJob do
       end.to_not change { Sunspot.session }
     end
 
-    it "does not commit changes to the index" do
+    it "commits changes to the index" do
       person = Person.create(:name => "The Grandson")
       job = Sunspot::Queue::DelayedJob::IndexJob.new(Person, person.id)
 
       expect do
         job.perform
-      end.to_not change { Person.search.hits.size }
-
-      expect do
-        commit
       end.to change { Person.search.hits.size }
     end
   end
