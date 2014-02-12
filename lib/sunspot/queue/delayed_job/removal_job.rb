@@ -5,9 +5,7 @@ module Sunspot::Queue::DelayedJob
     include ::Sunspot::Queue::Helpers
 
     def perform
-      without_proxy do
-        ::Sunspot.remove_by_id(klass, id)
-      end
+      Sunspot::Queue::Removal.remove klass, id
     end
   end
 end

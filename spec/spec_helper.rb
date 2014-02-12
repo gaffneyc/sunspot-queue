@@ -41,6 +41,12 @@ class Person < ActiveRecord::Base
   end
 end
 
+class Rails
+  def self.version
+    '4'
+  end
+end
+
 RSpec.configure do |config|
   config.treat_symbols_as_metadata_keys_with_true_values = true
   config.run_all_when_everything_filtered = true
@@ -84,7 +90,7 @@ RSpec.configure do |config|
   end
 
   config.before(:each, :backend => :delayed_job) do
-    Delayed::Worker.delay_jobs = false 
+    Delayed::Worker.delay_jobs = false
 
     require "sunspot/queue/delayed_job"
     backend = Sunspot::Queue::DelayedJob::Backend.new
