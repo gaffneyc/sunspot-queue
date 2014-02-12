@@ -13,6 +13,8 @@ module Sunspot
   end
 end
 
+require "sunspot/queue/index"
+require "sunspot/queue/removal"
 require "sunspot/queue/version"
 require "sunspot/queue/configuration"
 require "sunspot/queue/session_proxy"

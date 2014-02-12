@@ -9,9 +9,7 @@ module Sunspot::Queue::Resque
     end
 
     def self.perform(klass, id)
-      without_proxy do
-        Sunspot.index! [constantize(klass).find(id)]
-      end
+      Sunspot::Queue::Index.index klass, id
     end
   end
 end

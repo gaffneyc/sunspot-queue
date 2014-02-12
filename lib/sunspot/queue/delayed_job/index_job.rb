@@ -5,9 +5,7 @@ module Sunspot::Queue::DelayedJob
     include ::Sunspot::Queue::Helpers
 
     def perform
-      without_proxy do
-        Sunspot.index! [constantize(klass).find(id)]
-      end
+      Sunspot::Queue::Index.index klass, id
     end
   end
 end

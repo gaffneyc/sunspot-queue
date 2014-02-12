@@ -9,9 +9,7 @@ module Sunspot::Queue::Sidekiq
     sidekiq_options :queue => "sunspot"
 
     def perform(klass, id)
-      without_proxy do
-        ::Sunspot.remove_by_id!(klass, id)
-      end
+      Sunspot::Queue::Removal.remove klass, id
     end
   end
 end
