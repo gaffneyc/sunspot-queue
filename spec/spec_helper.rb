@@ -36,8 +36,18 @@ Sunspot::Adapters::DataAccessor.register(Sunspot::Rails::Adapters::ActiveRecordD
 class Person < ActiveRecord::Base
   include Sunspot::Rails::Searchable
 
+  attr_accessor :index_me
+
   searchable do
     text :name
+  end
+
+  def eligible_for_index?
+    if index_me.nil?
+      true
+    else
+      index_me
+    end
   end
 end
 

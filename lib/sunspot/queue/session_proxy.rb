@@ -16,7 +16,9 @@ module Sunspot::Queue
       end
 
       objects.each do |object|
-        @backend.index(object.class.name, object.id)
+        if eligible_for_index?(object)
+          @backend.index(object.class.name, object.id)
+        end
       end
     end
     alias :index! :index
@@ -31,7 +33,7 @@ module Sunspot::Queue
           # We're assuming if it doesn't have an id then it hasn't been
           # persisted and can safely be ignored since it shouldn't exist in the
           # search index.
-          if object.id
+          if object.id && eligible_for_index?(object)
             @backend.remove(object.class.name, object.id)
           end
         end
@@ -103,6 +105,16 @@ module Sunspot::Queue
 
     def dirty?
       false
+    end
+
+    private
+
+    def eligible_for_index?(object)
+      if object.respond_to?(:eligible_for_index?) 
+        object.eligible_for_index?
+      else
+        true
+      end
     end
   end
 end

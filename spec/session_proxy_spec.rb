@@ -68,6 +68,13 @@ describe Sunspot::Queue::SessionProxy do
         proxy.index(people)
       end.to raise_error(Sunspot::Queue::NotPersistedError)
     end
+
+    it "does not enqueue index for ineligible objects" do
+      person = Person.create :name => 'Frank', :index_me => false
+      backend.should_receive(:index).exactly(0).times
+
+      proxy.index(person)
+    end
   end
 
   context "#remove" do
@@ -79,6 +86,16 @@ describe Sunspot::Queue::SessionProxy do
       backend.should_receive(:remove).with do |klass, id|
         klass.should == "Person"
       end.exactly(5).times
+
+      proxy.remove(people)
+    end
+
+    it "does not enqueue job for ineligible instances" do
+      people = [true, true, false].map do |enqueue, i|
+        Person.create(:name => "Clone #{i}", :index_me => enqueue)
+      end
+
+      backend.should_receive(:remove).exactly(2).times
 
       proxy.remove(people)
     end
