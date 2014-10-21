@@ -11,7 +11,7 @@ module Sunspot::Queue::DelayedJob
     end
 
     def enqueue(job)
-      Delayed::Job.enqueue(job)
+      Delayed::Job.enqueue(job, run_at: @configuration.delay_for.from_now)
     end
 
     def index(klass, id)
