@@ -28,6 +28,22 @@ describe Sunspot::Queue::Resque::Backend do
         backend.index(Person, 12)
       end.to change { ResqueSpec.queue_for(Sunspot::Queue::Resque::IndexJob).size }.by(1)
     end
+
+    it "performs the job in real time in case of failure queueing the job" do
+      configuration.force_index_on_failure = true
+      Resque.should_receive(:enqueue) { raise 'some error' }
+      Sunspot::Queue::Resque::IndexJob.should_receive(:perform).with(Person, 12)
+
+      backend.index(Person, 12)
+    end
+
+    it "raises the error witout performing the job in real time in case of failure queueing the job" do
+      configuration.force_index_on_failure = false
+      Resque.should_receive(:enqueue) { raise 'some error' }
+      Sunspot::Queue::Resque::IndexJob.should_not_receive(:perform)
+
+      expect { backend.index(Person, 12) }.to raise_error('some error')
+    end
   end
 
   describe "#remove" do

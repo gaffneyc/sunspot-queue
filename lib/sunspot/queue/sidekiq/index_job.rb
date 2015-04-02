@@ -1,3 +1,4 @@
+require "sidekiq"
 require "sidekiq/worker"
 require "sunspot/queue/helpers"
 

@@ -12,6 +12,12 @@ module Sunspot::Queue::Sidekiq
     # Job needs to include Sidekiq::Worker
     def enqueue(job, klass, id)
       job.perform_async(klass.to_s, id)
+    rescue => e
+      if configuration.force_index_on_failure
+        job.perform(klass.to_s, id)
+      else
+        raise e
+      end
     end
 
     def index(klass, id)

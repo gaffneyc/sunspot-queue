@@ -2,7 +2,7 @@ require "spec_helper"
 
 describe Sunspot::Queue::DelayedJob::Backend do
 
-  # Mock DelayedJobJob 
+  # Mock DelayedJobJob
   class CustomDelayedJobJob < Struct.new(:klass, :id)
     def perform
     end
@@ -27,8 +27,24 @@ describe Sunspot::Queue::DelayedJob::Backend do
       Delayed::Job.should_receive(:enqueue) do |args|
         args.first.is_a? Sunspot::Queue::DelayedJob::IndexJob
       end
-      
+
       backend.index(Person, 12)
+    end
+
+    it "performs the job in real time in case of failure queueing the job" do
+      configuration.force_index_on_failure = true
+      Delayed::Job.should_receive(:enqueue) { raise 'some error' }
+      Sunspot::Queue::DelayedJob::IndexJob.any_instance.should_receive(:perform)
+
+      backend.index(Person, 12)
+    end
+
+    it "raises the error witout performing the job in real time in case of failure queueing the job" do
+      configuration.force_index_on_failure = false
+      Delayed::Job.should_receive(:enqueue) { raise 'some error' }
+      Sunspot::Queue::DelayedJob::IndexJob.any_instance.should_not_receive(:perform)
+
+      expect { backend.index(Person, 12) }.to raise_error('some error')
     end
   end
 
