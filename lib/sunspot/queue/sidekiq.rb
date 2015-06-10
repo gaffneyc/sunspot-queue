@@ -1,4 +1,5 @@
-require "sunspot/queue"
+require "sunspot"
+require "sidekiq"
 
 module Sunspot::Queue
   module Sidekiq
