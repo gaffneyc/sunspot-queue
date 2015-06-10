@@ -12,6 +12,12 @@ module Sunspot::Queue::Resque
 
     def enqueue(job, klass, id)
       ::Resque.enqueue(job, klass, id)
+    rescue => e
+      if configuration.force_index_on_failure
+        job.perform(klass, id)
+      else
+        raise e
+      end
     end
 
     def index(klass, id)

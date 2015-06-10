@@ -87,6 +87,10 @@ Sunspot::Queue.configure do |config|
   # Override default job classes
   config.index_job   = CustomIndexJob
   config.removal_job = CustomRemovalJob
+
+  # In case a failure on scheduling the job (Redis::TimeoutError for example), try to execute it
+  # in real time. 
+  config.force_index_on_failure = false
 end
 ```
 

@@ -12,6 +12,12 @@ module Sunspot::Queue::DelayedJob
 
     def enqueue(job)
       Delayed::Job.enqueue(job)
+    rescue => e
+      if configuration.force_index_on_failure
+        job.perform
+      else
+        raise e
+      end
     end
 
     def index(klass, id)
