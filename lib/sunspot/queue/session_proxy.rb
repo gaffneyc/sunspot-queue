@@ -88,13 +88,13 @@ module Sunspot::Queue
       yield if block_given?
     end
 
-    def commit
+    def commit(*args)
     end
 
-    def commit_if_delete_dirty
+    def commit_if_delete_dirty(*args)
     end
 
-    def commit_if_dirty
+    def commit_if_dirty(*args)
     end
 
     def delete_dirty?
