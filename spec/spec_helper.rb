@@ -8,6 +8,9 @@ require "sunspot/rails"
 require "sunspot/solr/server"
 require "resque_spec"
 
+# Require support files
+Dir[File.expand_path("../support/**/*.rb", __FILE__)].each {|f| require f}
+
 # Neither is required when loading sunspot/queue
 require "sunspot/queue/resque"
 require "sunspot/queue/sidekiq"
